@@ -1,0 +1,137 @@
+<%- include ('header') %>
+<style>
+
+    .div-wrapper {
+        height: 200px;
+        margin-top: 30%;
+
+        border-radius: 8px;
+    }
+     
+    .aligned {
+        width: 75%;
+        padding: 40px 20px;
+     
+        /* .... */
+    }
+</style>
+<div class="section-1-container section-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-10 offset-1 div-wrapper d-flex justify-content-center align-items-center">
+                <div class="">
+                    <ul class="nav nav-tabs fluent-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#host" role="tab" aria-controls="host" aria-selected="true">Host Connection</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#credentials" role="tab" aria-controls="credentials" aria-selected="false">User Credentials</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#inventory-settings" role="tab" aria-controls="inventory-settings" aria-selected="false">Inventory Settings</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#ldap-settings" role="tab" aria-controls="ldap-settings" aria-selected="false">LDAP Settings</a>
+                          </li>
+                      </ul>
+                      <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="host" role="tabpanel" aria-labelledby="home-tab">
+                            <h5>Host Connection Settings</h5>
+                            <% for (cfg of config) { %>
+                            <form action="/settings/config" method="post">
+                                <div class="mb-3">
+                                  <label for="1" class="form-label">Username</label>
+                                  <input name="hv_username" type="text" class="form-control" id="1" aria-describedby="Help" placeholder="<%= cfg.username %>">
+                                  <div id="emailHelp" class="form-text">User who's able to connect to your Hyper-V host.</div>
+                                </div>
+                                <div class="mb-3">
+                                  <label for="2" class="form-label">Hostname</label>
+                                  
+                                  <input name="hostname" type="text" class="form-control" id="2" placeholder="<%= cfg.hostname %>">
+                                
+                                  <div id="Help" class="form-text">IP/Hostname of your Hyper-V host.</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Connect to Host</button>
+                                
+                              </form>
+                              <% } %>
+                        </div>
+                        <div class="tab-pane fade" id="credentials" role="tabpanel" aria-labelledby="profile-tab">
+
+                              <h5>Credentials Settings</h5>
+                              <form action="/settings/auth" method="post">
+                                  <div class="mb-3">
+                                    <label for="1" class="form-label">Username</label>
+                                    <input name="username" type="text" class="form-control" id="1" aria-describedby="Help">
+                                  </div>
+                                  <div class="mb-3">
+                                    <label for="2" class="form-label">Password</label>
+                                    <input name="password" type="password" class="form-control" id="2">
+                                  </div>
+                                  <div class="mb-3">
+                                      <label for="2" class="form-label">Confirm password</label>
+                                      <input name="password_2" type="password" class="form-control" id="2">
+           
+                                  </div>
+                                  
+                                  <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                        </div>
+                        <div class="tab-pane fade" id="inventory-settings" role="tabpanel" aria-labelledby="profile-tab">
+                            <h5>Inventory Settings</h5>
+                            <form action="/settings/inventory" method="post">
+                                <div class="mb-3">
+                                  <label for="1" class="form-label">Images Path</label>
+                                  <% for (cfg of config) { %>
+                                  <input name="inventory_path" type="text" class="form-control" id="1" value="<%= cfg.inventory_path %>" aria-describedby="Help" placeholder="<%= cfg.inventory_path %>">
+                         
+                                  <div id="Help" class="form-text">Path of your images directory. Example: C:\ISO\</div>
+                                  <br>
+                                  <label for="1" class="form-label">VHD Path</label>
+                           
+                                  <input name="vhd_path" type="text" class="form-control" id="1" value="<%= cfg.vhd_path %>" aria-describedby="Help" placeholder="<%= cfg.vhd_path %>">
+                                  <% } %>
+                                  <div id="Help" class="form-text">Path of your VHD directory. Example: C:\VHD\</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                              </form>
+                              <hr/>
+                              <form action="/settings/add-interval" method="post">
+                                <div class="mb-3">
+                                  <label for="1" class="form-label">Refresh Interval</label>
+                                  <% for (cfg of config) { %>
+                                  <input name="refresh_interval" type="number" class="form-control" id="1" aria-describedby="Help" placeholder="<%= cfg.refresh_interval %>">
+                                  <% } %>
+                                  <div id="Help" class="form-text">Refreshing interval of the VM's (in seconds).</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                              </form>
+                              <hr/>
+                              <button type="submit" class="btn btn-secondary" onclick="window.location.href='/refreshimg'">Refresh Images</button>
+                              <button type="submit" class="btn btn-secondary" onclick="window.location.href='/refreshsw'">Refresh Switches</button>
+                        </div>
+                        <div class="tab-pane fade" id="ldap-settings" role="tabpanel" aria-labelledby="profile-tab">
+                            <h5>LDAP Settings</h5>
+                            <form action="/settings/ldap" method="post">
+                                <div class="mb-3">
+                                    <% for (cfg of config) { %>
+                                  <label for="1" class="form-label">LDAP URL</label>
+                                  <input name="ldap_url" type="text" class="form-control" id="1" aria-describedby="Help" placeholder="<%= cfg.ldap_url %>"> 
+                                  <div id="Help" class="form-text">Example: ldap://dc.example.com</div>
+                                  <label for="2" class="form-label">Base DN</label>
+                                  <br>
+                                  <input name="base_dn" type="text" class="form-control" id="2" aria-describedby="Help" placeholder="<%= cfg.base_dn %>"> 
+                                  <% } %>
+                                  <div id="Help" class="form-text">Example: dc=EXAMPLE,dc=COM</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                              </form>
+                        </div>
+                      </div>               
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include ('footer') %>

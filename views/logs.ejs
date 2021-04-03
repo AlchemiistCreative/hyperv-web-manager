@@ -1,0 +1,32 @@
+
+
+  <%- include ('header') %>
+  <div class="container">
+      <br>      
+      <br>
+
+  <table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Date</th>
+        <th scope="col">Logs</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <% for (log of logs) { %>
+      <tr>
+        
+        <th scope="row"><%= log.system_logs_id  %></th>
+        <td><%= log.system_logs_date  %></td>
+        <td><%= log.system_logs  %></td>
+        
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <button type="submit" class="btn btn-secondary" onclick="window.location.href='/clearlogs'">Clear Logs</button>
+</div>
+<%- include ('footer') %>

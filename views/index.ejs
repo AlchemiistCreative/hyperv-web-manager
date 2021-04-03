@@ -1,0 +1,350 @@
+<%- include ('header') %>
+<style>
+
+  html, body {
+      height: 100%;
+  }
+  body {
+      margin:0px;
+      padding: 0px;
+  }
+  .wrap {
+      height: auto;
+      margin: 0 auto -80px; /* footer height + space */
+      min-height: 100%;
+      padding: 0 0 80px; /* footer height + space */
+      box-sizing: border-box;
+      overflow: auto;
+  }
+  .footer {
+      background-color: #111111;
+      color: #eeeeee;
+      border-top: 1px solid red;
+      height: 60px;  /* footer height */
+      padding-top: 20px;
+      display: block;
+      margin-top: 20px; /* space between content and footer */
+      box-sizing: border-box;
+      position: relative;
+      width: 100%;
+  }
+
+    
+    .range-slider {
+      margin: 60px 0 0 0%;
+    }
+    
+    .range-slider {
+      width: 100%;
+    }
+    
+    .range-slider__range {
+      -webkit-appearance: none;
+      width: calc(100% - (73px));
+      height: 10px;
+      border-radius: 5px;
+      background: #d7dcdf;
+      outline: none;
+      padding: 0;
+      margin: 0;
+    }
+    .range-slider__range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+              appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
+      cursor: pointer;
+      -webkit-transition: background 0.15s ease-in-out;
+      transition: background 0.15s ease-in-out;
+    }
+    .range-slider__range::-webkit-slider-thumb:hover {
+      background: #1abc9c;
+    }
+    .range-slider__range:active::-webkit-slider-thumb {
+      background: #1abc9c;
+    }
+    .range-slider__range::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border: 0;
+      border-radius: 50%;
+      background: #2c3e50;
+      cursor: pointer;
+      -moz-transition: background 0.15s ease-in-out;
+      transition: background 0.15s ease-in-out;
+    }
+    .range-slider__range::-moz-range-thumb:hover {
+      background: #1abc9c;
+    }
+    .range-slider__range:active::-moz-range-thumb {
+      background: #1abc9c;
+    }
+    .range-slider__range:focus::-webkit-slider-thumb {
+      box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1abc9c;
+    }
+    
+    .range-slider__value {
+      display: inline-block;
+      position: relative;
+      width: 60px;
+      color: #fff;
+      line-height: 20px;
+      text-align: center;
+      border-radius: 3px;
+      background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
+      padding: 5px 10px;
+      margin-left: 8px;
+    }
+    .range-slider__value:after {
+      position: absolute;
+      top: 8px;
+      left: -7px;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-right: 7px solid rgba(84,58,183,1);
+      border-bottom: 7px solid transparent;
+      content: "";
+    }
+    
+    ::-moz-range-track {
+      background: #d7dcdf;
+      border: 0;
+    }
+    
+    input::-moz-focus-inner,
+    input::-moz-focus-outer {
+      border: 0;
+    }
+    .card {
+      margin: 0 auto; /* Added */
+      float: none; /* Added */
+      margin-bottom: 10px; /* Added */
+    
+}
+
+</style>
+<div class="container ">
+    <br>
+<center>
+    <h1 class="h1">Virtual Machines Inventory</h1>
+</center>
+
+<!--Card-->
+<br>
+<br>
+
+<% if(isRefreshed) { %>
+<div class="row">
+<% for (vm of vms) { %>
+
+
+<!--Card-->
+
+<div class="col-lg-3 col-md-12 mb-4 ">
+
+
+
+
+
+<div class="card " style="max-width: 85%;">
+
+    <!--Card image-->
+    <div class="view ">
+
+        <% if(vm.vm_state !== "Running") { %>
+      <img src="img/VM_OFF.png" class="card-img-top" alt="photo">
+
+      <% }else{ %>
+
+        <img src="img/VM_ON3.png" class="card-img-top" alt="photo">
+<% } %>
+
+    </div>
+  
+    <!--Card content-->
+    <div class="card-body">
+
+      <!--Title-->
+      <h4 style="font-size: 90%;" class="card-title font-weight-bold"> <%= vm.vm_name %></h4>
+      <!--Text-->
+      <p class="card-text">
+
+        State:  <%= vm.vm_state %>
+
+    </p>
+    <p class="card-text">
+        
+        Uptime: <%= vm.vm_uptime%>
+    </p>
+
+    
+    <div >
+    <% if(vm.vm_state !== "Running") { %>
+      <div class="center" style="text-align: center;">
+      <div style="display: inline-block;"> 
+        <a  class="btn btn-danger btn-sm " href="/delete/<%= vm.vm_name%>" class="text-primary"><i class="mi mi-Delete"></i></a>
+        </div>
+
+        <div style="display: inline-block;"> 
+          <a class="btn btn-success btn-sm " href="/start/<%= vm.vm_name%>" class="text-primary"><i class="mi mi-Play"></i></a>
+       </div>
+       <div style="display: inline-block;"> 
+        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#<%= vm.vm_id %>">
+          <i class="mi mi-Edit"></i>
+        </button>
+     </div>
+      </div>
+        <% }else{ %>
+          <div class="center" style="text-align: center;">
+          <div style="display: inline-block;"> 
+            <a  class="btn btn-danger btn-sm " href="/delete/<%= vm.vm_name%>" class="text-primary"><i class="mi mi-Delete"></i></a>
+            </div>
+            <div style="display: inline-block;"> 
+            <a class="btn btn-warning btn-sm " href="/stop/<%= vm.vm_name%>" class="text-primary"><i class="mi mi-Pause"></i></a>
+            </div>
+            <div style="display: inline-block;"> 
+              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#<%= vm.vm_id %>">
+                <i class="mi mi-Edit"></i>
+              </button>
+           </div>
+          </div>
+         <% } %>
+      </div>
+    </div>
+  </div>
+  <!--/.Card-->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="<%= vm.vm_id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit: <%= vm.vm_name%></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+        <div style="text-align:center;">
+          <form action="/edit-vm/<%= vm.vm_name%>" method="post"> 
+            <label for="vmname">VM Name</label>
+            <input name="name" type="vmname" id="vmname" class="form-control" value="<%= vm.vm_name%>" placeholder="<%= vm.vm_name%>">
+            <br>
+  
+            
+            <div class="form-group">
+              <label for="select1">Select an image</label>
+              <select name="image" class="form-control" id="select1">
+                <option value="0"></option>
+                <% for (img of imgs) { %>
+                  <% if (img.img !== "") { %>
+                
+                <option><%= img.img  %></option>
+                <% } %>
+                <% } %>
+  
+              </select>
+            </div>
+  
+  
+  
+            <div class="form-group">
+              <label for="select2">Select a switch</label>
+              <select name="vswitch" class="form-control" id="select2">
+                <option value="0"></option>
+                <% for (sw of switchs) { %>
+                  <% if (sw.switch !== "") { %>
+                  <option value="<%= sw.switch  %>"><%= sw.switch  %></option>
+                  <% } %>
+                  <% } %>
+        
+              </select>
+            </div>
+    
+            <div class="range-slider">
+              <label>Memory Amount (MB)</label>
+        
+              <input name="memory" class="range-slider__range" type="range" value="<%= vm.memory %>" min="128" max="32000" step="128">
+             
+              <span class="range-slider__value">0</span>
+            </div>
+            
+            <div class="range-slider">
+              <label>CPU Amount (Core)</label>
+              <input name="core" class="range-slider__range" type="range" value="<%= vm.cpu %>" min="1" max="128" step="1">
+              <span class="range-slider__value">0</span>
+            </div>
+            
+            <br>
+            
+          
+      </div>
+  
+        
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="showProgress">Save changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<% } %>
+
+</div>
+</div>
+</div>
+</div>
+
+<% }else{ %>
+  <center>
+  <h2>Refreshing inventory</h2>
+  <h4>This may take a few minutes...</h4>
+  <div class="progress-cover progress-cover-primary">
+    <div class="progress progress-medium fluent-position">
+      <span class="progress-span"></span>
+      <span class="progress-span"></span>
+      <span class="progress-span"></span>
+      <span class="progress-span"></span>
+      <span class="progress-span"></span>
+    </div>
+  </div>
+</center>
+  <% } %>
+<br>
+<br>
+<br>
+
+<script>
+
+  var rangeSlider = function(){
+      var slider = $('.range-slider'),
+          range = $('.range-slider__range'),
+          value = $('.range-slider__value');
+        
+      slider.each(function(){
+    
+        value.each(function(){
+          var value = $(this).prev().attr('value');
+          $(this).html(value);
+        });
+    
+        range.on('input', function(){
+          $(this).next(value).html(this.value);
+        });
+      });
+    };
+    
+    rangeSlider();
+
+</script>
+
+<%- include ('footer') %> 

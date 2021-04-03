@@ -1,0 +1,248 @@
+<%- include ('header') %>
+
+<style>
+
+    html, body {
+        height: 100%;
+    }
+    body {
+        margin:0px;
+        padding: 0px;
+    }
+    .wrap {
+        height: auto;
+        margin: 0 auto -80px; /* footer height + space */
+        min-height: 100%;
+        padding: 0 0 80px; /* footer height + space */
+        box-sizing: border-box;
+        overflow: auto;
+    }
+    .footer {
+        background-color: #111111;
+        color: #eeeeee;
+        border-top: 1px solid red;
+        height: 60px;  /* footer height */
+        padding-top: 20px;
+        display: block;
+        margin-top: 20px; /* space between content and footer */
+        box-sizing: border-box;
+        position: relative;
+        width: 100%;
+    }
+
+      
+      .range-slider {
+        margin: 60px 0 0 0%;
+      }
+      
+      .range-slider {
+        width: 100%;
+      }
+      
+      .range-slider__range {
+        -webkit-appearance: none;
+        width: calc(100% - (73px));
+        height: 10px;
+        border-radius: 5px;
+        background: #d7dcdf;
+        outline: none;
+        padding: 0;
+        margin: 0;
+      }
+      .range-slider__range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+                appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
+        cursor: pointer;
+        -webkit-transition: background 0.15s ease-in-out;
+        transition: background 0.15s ease-in-out;
+      }
+      .range-slider__range::-webkit-slider-thumb:hover {
+        background: #1abc9c;
+      }
+      .range-slider__range:active::-webkit-slider-thumb {
+        background: #1abc9c;
+      }
+      .range-slider__range::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border: 0;
+        border-radius: 50%;
+        background: #2c3e50;
+        cursor: pointer;
+        -moz-transition: background 0.15s ease-in-out;
+        transition: background 0.15s ease-in-out;
+      }
+      .range-slider__range::-moz-range-thumb:hover {
+        background: #1abc9c;
+      }
+      .range-slider__range:active::-moz-range-thumb {
+        background: #1abc9c;
+      }
+      .range-slider__range:focus::-webkit-slider-thumb {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1abc9c;
+      }
+      
+      .range-slider__value {
+        display: inline-block;
+        position: relative;
+        width: 60px;
+        font-size: 85%;
+        color: #fff;
+        line-height: 20px;
+        text-align: center;
+        border-radius: 3px;
+        background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
+        padding: 5px 10px;
+        margin-left: 8px;
+      }
+      .range-slider__value:after {
+        position: absolute;
+        top: 8px;
+        left: -7px;
+        width: 0;
+        height: 0;
+        border-top: 7px solid transparent;
+        border-right: 7px solid rgba(84,58,183,1);
+        border-bottom: 7px solid transparent;
+        content: "";
+      }
+      
+      ::-moz-range-track {
+        background: #d7dcdf;
+        border: 0;
+      }
+      
+      input::-moz-focus-inner,
+      input::-moz-focus-outer {
+        border: 0;
+      }
+      .card {
+        margin: 0 auto; /* Added */
+        float: none; /* Added */
+        margin-bottom: 10px; /* Added */
+      
+}
+
+
+</style>
+
+    <div class="container">
+    <br>
+    <br>
+    <br>
+
+     <section id="main">
+    
+        <div class="card" style="width: 27rem;">
+
+            <div class="card-body">
+              <h5 class="card-title">VM deployment</h5>
+              <br>
+              <div style="text-align:center;">
+            <form action="/new-vm" method="post"> 
+              <label for="vmname">VM Name</label>
+              <input name="name" type="vmname" id="vmname" class="form-control">
+              <br>
+
+              
+              <div class="form-group">
+                <label for="select1">Select an image</label>
+                <select name="image" class="form-control" id="select1">
+                  <% for (img of imgs) { %>
+                    <% if (img.img !== "") { %>
+                  <option><%= img.img  %></option>
+                  <% } %>
+                  <% } %>
+                </select>
+              </div>
+
+
+
+              <div class="form-group">
+                <label for="select2">Select a switch</label>
+                <select name="vswitch" class="form-control" id="select2">
+            
+                  <% for (sw of switchs) { %>
+
+                    <% if (sw.switch !== "") { %>
+                    <option><%= sw.switch  %></option>
+
+                    <% } %>
+                    <% } %>
+                </select>
+              </div>
+
+
+
+              <div class="range-slider">
+                <label>Memory Amount (MB)</label>
+                <input name="memory" class="range-slider__range" type="range" value="1024" min="128" max="32000" step="128">
+                <span class="range-slider__value">0</span>
+              </div>
+              
+              <div class="range-slider">
+                <label>CPU Amount (Core)</label>
+                <input name="core" class="range-slider__range" type="range" value="2" min="1" max="128" step="1">
+                <span class="range-slider__value">0</span>
+              </div>
+              
+              <div class="range-slider">
+                <label>VHD Size (GB)</label>
+                <input name="vhdsize" class="range-slider__range" type="range" value="100" min="0" max="2000" step="10">
+                <span class="range-slider__value">0</span>
+              </div> 
+
+              <br>
+              <div  class="form-check pl-0">
+                <input name="needtorun" class="form-check-input" type="checkbox" value="true" id="defaultCheck1">
+                <label class="form-check-label" for="defaultCheck1">
+                  Start VM
+                </label>
+              </div>
+              <br>
+              <br>
+              <button type="submit" class="btn btn-primary">Deploy VM</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </form>
+        
+    </section>
+
+
+</div>
+<br>
+<br>
+<br>
+<script>
+
+    var rangeSlider = function(){
+        var slider = $('.range-slider'),
+            range = $('.range-slider__range'),
+            value = $('.range-slider__value');
+          
+        slider.each(function(){
+      
+          value.each(function(){
+            var value = $(this).prev().attr('value');
+            $(this).html(value);
+          });
+      
+          range.on('input', function(){
+            $(this).next(value).html(this.value);
+          });
+        });
+      };
+      
+      rangeSlider();
+
+    jQuery("span").fitText(0.38);
+    
+</script>
+
+<%- include ('footer') %>
