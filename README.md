@@ -12,7 +12,7 @@ Deploy, remove, edit, start your VM's from a Web GUI.
 ## Requirements
 The PowerShell Session is working through ssh, it doesnt support password authification so you will need to use **Pubkeyauthentication** between the Hyper-V host and the server.
 
-The server and the Hyper-V host needs [Powershell 7.1](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1)
+The server and the Hyper-V host need [Powershell 7.1](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1)
 
 It does not support space in VM name. (At least for the moment).
 
