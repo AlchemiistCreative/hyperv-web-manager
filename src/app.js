@@ -27,7 +27,7 @@ default_sql_setup()
 //Hyper-V
 //initiate PSSession
 var isConnected
-var isRefreshed = true
+var isRefreshed 
 function pscon(cb){
   let CFG = require('./models/cfg');
   CFG.get_config((settings) => {
@@ -40,9 +40,10 @@ function pscon(cb){
       ps.addCommand(`$session = New-PSSession -HostName ${hostname} -UserName ${username}`);
       ps.invoke()
       .then(output => {
-        console.log("connected to host");
+        //console.log("connected to host");
         isConnected = true
         cb();
+
       })
       .catch(err => {
         console.log(err);
@@ -124,7 +125,6 @@ function img(cb){
   }
 }
 function da_vm(cb){
-//console.log(isConnected);
   if(isConnected){
     ps.addCommand(`Invoke-Command $session -ScriptBlock {$ProgressPreference = 'SilentlyContinue'; get-vm | ft -HideTableHeaders  Name, State, CPUUsage, UPTIME, VMID  -AutoSize}`);
     ps.invoke()
@@ -134,28 +134,53 @@ function da_vm(cb){
       let output_filtered = removeEmptyLines(output);
   
       var lines = output_filtered.split("\n");
+      var arr = [];
       for(var i = 0;i < lines.length;i++){
      
         let VM = lines[i]; 
   
         let VM_array = VM.split(" ");
-      
+    
         let filtered = VM_array.filter(Boolean);
   
-        
           if(filtered[4] === null || filtered[4] === undefined || filtered[4] === ''){
-  
-            //console.log("null");
   
           }else{
             connection.query(`INSERT INTO VMS_UNIQUE SET VMNAME = ?, VMSTATE = ?, VMCPUUSAGE = ?, VMUPTIME = ?, VMID = ? ON DUPLICATE KEY UPDATE VMNAME = ?, VMSTATE = ?, VMCPUUSAGE = ?, VMUPTIME = ?`, [filtered[0], filtered[1], filtered[2], filtered[3], filtered[4],filtered[0], filtered[1], filtered[2], filtered[3]], (err, result) => {
               if (err) throw err
               
               });
-  
+              let VMID = filtered[4].substring(0, 8);
+
+              arr.push(VMID);
           }
         }
-        
+        let CFG = require('./models/cfg');
+        CFG.get_vms((vms) => {
+
+          var arr2 = []
+          for(vm of vms){
+            arr2.push(vm.vm_id)
+          }
+          arr2.forEach(function(item) {
+      
+            if(arr.indexOf(item) !== -1){
+              //console.log("in array: " + item);
+      
+            }else{
+              //console.log("not in array: " + item);
+              connection.query(`DELETE FROM VMS_UNIQUE WHERE VMID = ?`, [item], (err, result) => {
+                if (err) throw err
+                
+              });
+            }
+          
+          
+          });
+          arr2 = [];
+          arr = [];
+        })
+
     cb();
     })
     .catch(err => {
@@ -338,6 +363,7 @@ function vm_info(cb){
 
   }
 }
+
 // Express JS
 const app = express(); 
 app.use(express.static('public'));
@@ -900,9 +926,6 @@ function loop(){
       var daVMLoop = setInterval(function(){
         da_vm(function(){
           vm_info(function(){
-
-            console.log("looped");
-             
             isRefreshed = true;
           });
         });
