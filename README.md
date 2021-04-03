@@ -4,9 +4,9 @@
 Deploy, remove, edit, start your VM's from a Web GUI.
 
 <img src="./img/hwm.login.png"
-     style="float: left; margin-right: 10px;" width=200/>
+     style="float: left; margin-right: 10px;" width=400/>
 <img src="./img/hwm.dashboard.png"
-     style="float: left; margin-right: 10px;" width=200/>     
+     style="float: left; margin-right: 10px;" width=400/>     
    
 *LDAP* is supported to authenticate the user but there is also a basic login system.
 ## Requirements
@@ -18,3 +18,16 @@ It does not support space in VM name. (At least for the moment).
 
 ## Usage
 
+Clone the repo and install the dependencies:
+```
+git clone https://github.com/AlchemiistCreative/hyperv-web-manager
+cd hyperv-web-manager/src
+npm install
+```
+Create a MySQL/MariaDB Database with the [dump.sql](./database/) and adapt your configuration in config/db.js
+
+Start the NodeJS app:
+```
+node app.js
+```
+Default http port is 5000.
