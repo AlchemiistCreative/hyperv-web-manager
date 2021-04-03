@@ -1,5 +1,5 @@
 # Hyper-V Web Manager
-**Hyper-V Web Manager** is a Web Dashboard that will allow to manage your Hyper-V Host ; 
+**Hyper-V Web Manager** is a Web Dashboard that will allow you to manage your Hyper-V Host ; 
 
 Deploy, remove, edit, start your VM's from a Web GUI.
 
@@ -13,6 +13,8 @@ Deploy, remove, edit, start your VM's from a Web GUI.
 The PowerShell Session is working through ssh, it doesnt support password authification so you will need to use **Pubkeyauthentication** between the Hyper-V host and the server.
 
 The server and the Hyper-V host needs [Powershell 7.1](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1)
+
+It does not support space in VM name. (At least for the moment).
 
 ## Usage
 
