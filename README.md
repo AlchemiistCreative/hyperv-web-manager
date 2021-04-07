@@ -30,4 +30,4 @@ Start the NodeJS app:
 ```
 node app.js
 ```
-Default http port is 5000.
+Default http port is 5000, Default credentials are admin/admin.
