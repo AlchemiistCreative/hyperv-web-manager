@@ -5,6 +5,7 @@ const session = require('express-session');
 const removeEmptyLines = require("remove-blank-lines");
 const bcrypt = require('bcrypt');
 const ActiveDirectory = require('activedirectory');
+var cors = require('cors');
 
 
 const ps = new Shell({
@@ -27,7 +28,7 @@ default_sql_setup()
 //Hyper-V
 //initiate PSSession
 var isConnected
-var isRefreshed 
+var isRefreshed
 function pscon(cb){
   let CFG = require('./models/cfg');
   CFG.get_config((settings) => {
@@ -40,7 +41,7 @@ function pscon(cb){
       ps.addCommand(`$session = New-PSSession -HostName ${hostname} -UserName ${username}`);
       ps.invoke()
       .then(output => {
-        //console.log("connected to host");
+        console.log("connected to host");
         isConnected = true
         cb();
 
@@ -319,7 +320,7 @@ function edit_vm(name, NewVMName, memory, core, vswitch, image, cb){
 }
 function vm_info(cb){
   if(isConnected){
-    ps.addCommand(`Invoke-Command $session -ScriptBlock {$ProgressPreference = 'SilentlyContinue'; get-vm | ft -HideTableHeaders  MEMORYSTARTUP, ProcessorCount,VMID  -AutoSize}`);
+    ps.addCommand(`Invoke-Command $session -ScriptBlock {$ProgressPreference = 'SilentlyContinue'; get-vm |  ft -HideTableHeaders  MEMORYSTARTUP, ProcessorCount,VMID  -AutoSize}`);
    
     
     ps.invoke()
@@ -364,8 +365,72 @@ function vm_info(cb){
   }
 }
 
+function vm_ip(cb){
+  if(isConnected){
+    ps.addCommand(`Invoke-Command $session -ScriptBlock {$ProgressPreference = 'SilentlyContinue'; Get-VMNetworkAdapter * | ft -HideTableHeaders vmid, ipaddresses -AutoSize}`);
+   
+    
+    ps.invoke()
+    .then(output => {
+      //console.log(output);
+  
+      let output_filtered = removeEmptyLines(output);
+  
+      var lines = output_filtered.split("\n");
+      for(var i = 0;i < lines.length;i++){
+     
+        let VM = lines[i]; 
+  
+        let VM_array = VM.split(" ");
+      
+        let filtered = VM_array.filter(Boolean);
+        
+        
+
+      if(filtered[2] === null || filtered[2] === undefined || filtered[2] === ''){
+        
+
+         //console.log("null");
+  
+         }else{
+
+          filtered_ = filtered[2].replace('}', '')
+          filtered__ = filtered_.replace('{', '')
+          filtered___ = filtered__.replace(',', '')
+          console.log('filter: ' + filtered___)
+          let VMID = filtered[0].substring(0, 8);
+          console.log('VMID: ' + VMID)
+          
+        connection.query(`UPDATE VMS_UNIQUE SET IP = ? WHERE VMID = ?`, [filtered___, VMID], (err, result) => {
+         if (err) throw err
+              
+        });
+  
+         }
+        }
+        
+    cb();
+    })
+    .catch(err => {
+      console.log(err);
+    });
+
+  }
+}
+//RDP
+
+
+
 // Express JS
 const app = express(); 
+
+
+const SocketService = require("./SocketService");
+
+
+const server = require("http").createServer(app);
+
+
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: false}));
 app.use(bodyparser.json());
@@ -377,6 +442,26 @@ app.use(session({
 app.use(express.json());
 app.use(require('./middlewares/flash'));
 app.set('view engine', 'ejs');
+
+
+app.get('/ssh/:ip', (req, res) => {
+  if (req.session.loggedin) {
+      //Add :user param if you want to define it. 
+      let user = req.params.user
+      let ip = req.params.ip
+      console.log(user + ip)
+      const socketService = new SocketService(user, ip);
+
+      socketService.attachServer(server);
+
+
+  res.render('ssh', {IsLoggedIn: req.session.loggedin});
+} else {
+  req.flash('error', 'What are you trying to do?');
+  res.redirect('/')
+
+}
+})
 
 //Routes
 app.get('/', (req, res) => {
@@ -497,7 +582,7 @@ app.get('/dashboard', (req, res) => {
   CFG.get_img((imgs) => {
     CFG.get_sw((switchs) => {
       CFG.get_vms((vms) => {
-
+          
       res.render('index', {switchs: switchs, imgs: imgs, vms: vms, IsLoggedIn: req.session.loggedin, isRefreshed: isRefreshed});
   
       })
@@ -918,6 +1003,7 @@ app.post('/edit-vm/:name', (req, res) => {
   }
 })
 
+
 function loop(){
   let CFG = require('./models/cfg');
   CFG.get_config((settings) => {
@@ -926,7 +1012,9 @@ function loop(){
       var daVMLoop = setInterval(function(){
         da_vm(function(){
           vm_info(function(){
+            vm_ip(function(){
             isRefreshed = true;
+            });
           });
         });
       }, settings[0].refresh_interval * 1000);
@@ -936,4 +1024,10 @@ function loop(){
 }
 
 loop();
-app.listen('5000');
+const port = 5000;
+
+server.listen(port, function () {
+  console.log("Server listening on : ", port);
+
+});
+

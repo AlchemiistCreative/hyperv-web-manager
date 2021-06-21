@@ -124,7 +124,21 @@
       margin-bottom: 10px; /* Added */
     
 }
+.button-container{
 
+  position:relative;
+  }
+  
+  .button-container a{
+  position: absolute;
+  bottom:72.5%;
+  right:0%;
+  background-color:#8F0005;
+  border-radius:1.5em;
+  color:white;
+  text-transform:uppercase;
+  padding:1em 1.5em;
+  }
 </style>
 <div class="container ">
     <br>
@@ -158,8 +172,12 @@
       <img src="img/VM_OFF.png" class="card-img-top" alt="photo">
 
       <% }else{ %>
-
+        <div class="button-container">
         <img src="img/VM_ON3.png" class="card-img-top" alt="photo">
+  
+        <a class="btn btn-success btn-sm " href="/ssh/<%= vm.ip%>" class="text-primary"><i class="mi mi-Remote"></i></a>
+      </div>
+        
 <% } %>
 
     </div>
@@ -205,6 +223,7 @@
             <div style="display: inline-block;"> 
             <a class="btn btn-warning btn-sm " href="/stop/<%= vm.vm_name%>" class="text-primary"><i class="mi mi-Pause"></i></a>
             </div>
+            
             <div style="display: inline-block;"> 
               <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#<%= vm.vm_id %>">
                 <i class="mi mi-Edit"></i>

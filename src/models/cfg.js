@@ -81,6 +81,9 @@ class CFG {
     get cpu(){
         return this.row.CPU
     }
+    get ip(){
+        return this.row.IP
+    }
     static delete(name,cb) {
 
     

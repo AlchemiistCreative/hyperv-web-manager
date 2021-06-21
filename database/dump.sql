@@ -71,6 +71,7 @@ CREATE TABLE `VMS_UNIQUE` (
   `VMID` varchar(8) NOT NULL,
   `MEMORYSTARTUP` varchar(255) NOT NULL,
   `CPU` varchar(255) NOT NULL,
+  `IP` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `VMID` (`VMID`)
