@@ -5,6 +5,10 @@
 //
 // anything defined in a previous bundle is accessed via the
 // orig method which is the require for previous bundles
+
+// Change this variable with your own url
+var urlServer = 'http://example.com'
+
 parcelRequire = (function (modules, cache, entry, globalName) {
   // Save the require from previous bundle to this closure if any
   var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
@@ -7937,7 +7941,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // index.js
 // IMPORTANT: Make sure you replace this address with your server address.
-var serverAddress = "http://10.0.0.113:5000";
+var serverAddress = urlServer;
 
 function connectToSocket(serverAddress) {
   return new Promise(function (res) {
